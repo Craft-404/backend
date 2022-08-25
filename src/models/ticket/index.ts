@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, PopulatedDoc } from "mongoose";
 import {
   CREATED,
   STATUSES,
@@ -6,14 +6,16 @@ import {
   TICKET_TYPE_ENUM,
   TYPES,
 } from "../../middlewares/constants";
+import { DocumentModel, IDocumentDocument } from "../document";
+import { EmployeeModel, IEmployeeDocument } from "../employee";
 // import { PRIORITY, priorityEnum } from "../../middlewares/constants";
 
 export interface ITicketDocument extends Document {
   title: string;
-  reporter: Schema.Types.ObjectId;
+  reporter: PopulatedDoc<IEmployeeDocument>; //+
   description: string | undefined;
   applicationId: Schema.Types.ObjectId | undefined;
-  documentId: string | undefined;
+  documentId: PopulatedDoc<IDocumentDocument>; //+
   remarks: string | undefined;
   dueDate: Date | undefined;
   priority: Number; //priorityEnum;
@@ -37,6 +39,7 @@ export const TicketSchema = new Schema<ITicketDocument>(
     reporter: {
       type: Schema.Types.ObjectId,
       required: true,
+      ref: EmployeeModel,
     },
     description: {
       type: String,
@@ -44,6 +47,7 @@ export const TicketSchema = new Schema<ITicketDocument>(
 
     documentId: {
       type: Schema.Types.ObjectId,
+      ref: DocumentModel,
     },
 
     dueDate: Date,

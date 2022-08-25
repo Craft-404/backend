@@ -170,7 +170,7 @@ router.get("/:_id", async (req: Request, res: Response) => {
     if (
       designation?.name === ADMIN ||
       ticketAssignee ||
-      ticket!.reporter.toString() == req.employee._id
+      ticket!.reporter!.toString() == req.employee._id
     ) {
       return res.status(200).send(ticket);
     }

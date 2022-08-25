@@ -14,6 +14,8 @@ import {
 import { AnnouncementModel } from "../models/announcement";
 import { BureauModel, IBureauDocument } from "../models/bureau";
 import { DesignationModel } from "../models/designation";
+import { IDocumentDocument } from "../models/document";
+import { IEmployeeDocument } from "../models/employee";
 import { TicketModel } from "../models/ticket";
 import { TicketAssigneeModel } from "../models/ticketAsssignee";
 const router = Router();
@@ -33,23 +35,30 @@ router.get("/", async (req: Request, res: Response) => {
       _id: { $in: tickets },
       status: { $in: [IN_PROCESS, CREATED] },
       category: TASK,
-    }).limit(3);
+    })
+      .limit(3)
+      .populate<{ reporter: IEmployeeDocument }>("reporter", "id name")
+      .populate<{ documentId: IDocumentDocument }>("documentId", "id link");
     const overdue = await TicketModel.find({
       _id: { $in: tickets },
       status: { $in: [IN_PROCESS, CREATED] },
       dueDate: { $lte: new Date(Date.now()) },
-    });
+    })
+      .populate<{ reporter: IEmployeeDocument }>("reporter", "id name")
+      .populate<{ documentId: IDocumentDocument }>("documentId", "id link");
     const approvals = await TicketModel.find({
       _id: { $in: tickets },
       status: { $in: [IN_PROCESS, CREATED] },
       category: APPROVAL,
-    }).limit(3);
+    })
+      .limit(3)
+      .populate<{ reporter: IEmployeeDocument }>("reporter", "id name")
+      .populate<{ documentId: IDocumentDocument }>("documentId", "id link");
     const bureau = await BureauModel.findById(req.employee.bureauId);
     const announcements = await AnnouncementModel.find({
       bureauId: bureau?._id,
-    })
-      .limit(3)
-      .populate<{ bureauId: IBureauDocument }>("bureauId");
+    }).limit(3);
+    // .populate<{ bureauId: IBureauDocument }>("bureauId");
     return res.status(200).send({ approvals, announcements, tasks, overdue });
   } catch (e: any) {
     if (e.status) return res.status(e.status).send(e.message);

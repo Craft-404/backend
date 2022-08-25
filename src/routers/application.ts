@@ -31,8 +31,8 @@ router.get("/", async (req: Request, res: Response) => {
     const applications = await ApplicationModel.find({
       userId: req.user._id,
     })
-      .populate<{ userId: IUserDocument }>("userId")
-      .populate<{ scheme: ISchemeDocument }>("scheme");
+      .populate<{ userId: IUserDocument }>("userId", "id name")
+      .populate<{ scheme: ISchemeDocument }>("scheme", "id name");
     console.log(applications);
     return res.status(200).send(applications);
   } catch (e: any) {
