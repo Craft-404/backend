@@ -11,6 +11,8 @@ import moment from "moment";
 
 const router = Router();
 
+router.use(authFunction);
+
 router.get("/", async (req: Request, res: Response) => {
   try {
     var years = moment().diff(req.user.dob, "years", false);
@@ -24,8 +26,6 @@ router.get("/", async (req: Request, res: Response) => {
     else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
   }
 });
-
-router.use(authFunction);
 
 router.post("/", async (req: Request, res: Response) => {
   try {
