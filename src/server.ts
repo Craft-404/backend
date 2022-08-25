@@ -2,11 +2,17 @@ import app from "./app";
 import { BUREAU_DATA, SEED_EMPLOYEE_DATA } from "./config";
 import { BureauModel } from "./models/bureau";
 import { EmployeeModel } from "./models/employee";
+import models from "./models";
 
 const PORT = parseInt(process.env.PORT || "8000");
 
 app.listen(PORT, async () => {
   require("./db");
+  await Promise.all(
+    models.map(async (model: any) => {
+      await model.init();
+    })
+  );
   await EmployeeModel.init();
   if ((await EmployeeModel.find()).length === 0) {
     const employee = new EmployeeModel(SEED_EMPLOYEE_DATA);

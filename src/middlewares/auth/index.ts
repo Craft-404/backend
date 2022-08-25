@@ -9,6 +9,9 @@ import {
 } from "../constants";
 import { EmployeeModel } from "../../models/employee";
 import { SECRET } from "../../config";
+import { UserModel } from "../../models/user";
+
+//TODO RESET PASSWORD
 
 //GETTING JWT SECRET FROM ENV FILE
 const secret = SECRET || "";
@@ -30,17 +33,29 @@ const authFunction = async (
     //DECODING TOKEN
     const { _id } = jwt.verify(token, secret) as JwtPayload;
 
-    //CHECKING IF USER EXISTS
-    const employee = await EmployeeModel.findById(_id);
-    console.log(employee);
-    if (!employee) {
-      return res.status(NOT_FOUND_ERROR.status).send(NOT_FOUND_ERROR.message);
-    }
+    if (req.header("HTTP_USER_AGENT")?.slice(0, 3) == "APP") {
+      //CHECKING IF USER EXISTS
+      const employee = await EmployeeModel.findById(_id);
+      if (!employee) {
+        return res.status(NOT_FOUND_ERROR.status).send(NOT_FOUND_ERROR.message);
+      }
 
-    //ADDING USER AND TOKEN TO REQUEST OBJECT
-    req.employee = employee;
-    req.token = token;
-    next();
+      //ADDING USER AND TOKEN TO REQUEST OBJECT
+      req.employee = employee;
+      req.token = token;
+      next();
+    } else if (req.header("HTTP_USER_AGENT")?.slice(0, 3) == "WEB") {
+      //CHECKING IF USER EXISTS
+      const user = await UserModel.findById(_id);
+      if (!user) {
+        return res.status(NOT_FOUND_ERROR.status).send(NOT_FOUND_ERROR.message);
+      }
+
+      //ADDING USER AND TOKEN TO REQUEST OBJECT
+      req.user = user;
+      req.token = token;
+      next();
+    } else return res.status(AUTHENTICATION_ERROR.status).send();
   } catch (e: any) {
     if (e.status && e.message) return res.status(e.status).send(e);
     else

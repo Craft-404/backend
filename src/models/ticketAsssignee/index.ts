@@ -22,6 +22,8 @@ export const TicketAssigneeSchema = new Schema<ITicketAssigneeDocument>(
   }
 );
 
+TicketAssigneeSchema.index({ employeeId: 1, ticketId: 1 });
+
 //EXPORTING MODEL
 export const TicketAssigneeModel = model<ITicketAssigneeDocument>(
   "TicketAssignee",
