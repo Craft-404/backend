@@ -23,7 +23,7 @@ const AUTHENTICATION_ERROR: StandardResponse = {
 };
 
 const RESOURCE_CREATED: StandardResponse = {
-  status: 200,
+  status: 201,
   message: "Resource Created Successfully",
 };
 
@@ -44,6 +44,13 @@ export const RESTRICTED_ERROR: StandardResponse = {
 const MEDIUM = "Medium";
 const HIGH = "High";
 const LOW = "Low";
+
+export const CREATED = "Created";
+export const IN_PROCESS = "In Process";
+export const COMPLETED = "Completed";
+
+export const STATUSES = [CREATED, IN_PROCESS, COMPLETED];
+export type STATUS_ENUM = typeof CREATED | typeof IN_PROCESS | typeof COMPLETED;
 
 export const LEVEL_ONE = "Level 1";
 export const LEVEL_TWO = "Level 2";
@@ -66,3 +73,9 @@ export {
   INTERNAL_SERVER_ERROR,
   RESOURCE_UPDATED,
 };
+
+export const APPROVAL = "Approval";
+export const TASK = "Task";
+
+export const TYPES = [APPROVAL, TASK];
+export type TICKET_TYPE_ENUM = typeof APPROVAL | typeof TASK;

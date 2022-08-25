@@ -1,4 +1,10 @@
 import { Schema, model } from "mongoose";
+import {
+  STATUSES,
+  STATUS_ENUM,
+  TICKET_TYPE_ENUM,
+  TYPES,
+} from "../../middlewares/constants";
 // import { PRIORITY, priorityEnum } from "../../middlewares/constants";
 
 export interface ITicketDocument extends Document {
@@ -7,10 +13,11 @@ export interface ITicketDocument extends Document {
   description: string | undefined;
   applicationId: Schema.Types.ObjectId | undefined;
   documentId: string | undefined;
-  //   startDate: Date;
+  remarks: string | undefined;
   dueDate: Date | undefined;
   priority: Number; //priorityEnum;
-  //TODO   status:
+  status: STATUS_ENUM;
+  category: TICKET_TYPE_ENUM;
 }
 
 //Employee SCHEMA
@@ -47,6 +54,17 @@ export const TicketSchema = new Schema<ITicketDocument>(
     },
     applicationId: {
       type: Schema.Types.ObjectId,
+    },
+    status: {
+      type: String,
+      enum: STATUSES,
+    },
+    remarks: {
+      type: String,
+    },
+    category: {
+      type: String,
+      enum: TYPES,
     },
   },
   {
