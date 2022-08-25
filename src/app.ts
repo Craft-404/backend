@@ -14,6 +14,7 @@ import dashboardRouter from "./routers/dashboard";
 import designationRouter from "./routers/designation";
 import userRouter from "./routers/user";
 import schemeRouter from "./routers/scheme";
+import applicationRouter from "./routers/application";
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
@@ -24,5 +25,6 @@ app.use("/api/v1/dashboard", dashboardRouter);
 app.use("/api/v1/announcement", announcementRouter);
 app.use("/api/v1/designation", designationRouter);
 app.use("/api/v1/scheme", schemeRouter);
+app.use("/api/v1/application", applicationRouter);
 
 export default app;

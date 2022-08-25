@@ -7,8 +7,23 @@ import {
 } from "../middlewares/constants";
 import { DesignationModel } from "../models/designation";
 import { SchemeModel } from "../models/scheme";
+import moment from "moment";
 
 const router = Router();
+
+router.get("/", async (req: Request, res: Response) => {
+  try {
+    var years = moment().diff(req.user.dob, "years", false);
+    const schemes = await SchemeModel.find({
+      minAge: { $gte: years },
+      maxAge: { $lte: years },
+    });
+    return res.status(200).send(schemes);
+  } catch (e: any) {
+    if (e.status) return res.status(e.status).send(e);
+    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
+  }
+});
 
 router.use(authFunction);
 

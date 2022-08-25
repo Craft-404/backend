@@ -7,7 +7,6 @@
     "start": "npm run build && node dist/server.js",
     "dev": "nodemon src/server.ts",
     "build": "rm -rf dist && tsc -p .",
-    "postinstall": "npm run tsc",
     "tsc": "./node_modules/typescript/bin/tsc"
   },
   "keywords": [],
@@ -27,6 +26,7 @@
     "firebase-admin": "^11.0.1",
     "jsonwebtoken": "^8.5.1",
     "module-alias": "^2.2.2",
+    "moment": "^2.29.4",
     "mongoose": "^6.5.2",
     "reflect-metadata": "^0.1.13",
     "ts-node": "^10.9.1"
