@@ -1,0 +1,42 @@
+{
+  "name": "sainyojit_backend",
+  "version": "1.0.0",
+  "description": "the backend for sainyojit portal made for aicte.",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run build && node dist/server.js",
+    "dev": "nodemon src/server.ts",
+    "build": "rm -rf dist && tsc -p ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/validator": "^13.7.5",
+    "apollo-client": "^2.6.10",
+    "apollo-server-express": "^3.10.1",
+    "bcryptjs": "^2.4.3",
+    "class-validator": "^0.13.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "firebase-admin": "^11.0.1",
+    "jsonwebtoken": "^8.5.1",
+    "module-alias": "^2.2.2",
+    "mongoose": "^6.5.2",
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+    "@typegoose/typegoose": "^9.11.0",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/mongodb": "^4.0.7",
+    "@types/mongoose": "^5.11.97",
+    "@types/node": "^18.7.6",
+    "nodemon": "^2.0.19",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4"
+  }
+}
