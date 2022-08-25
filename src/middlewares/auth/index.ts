@@ -33,7 +33,10 @@ const authFunction = async (
     //DECODING TOKEN
     const { _id } = jwt.verify(token, secret) as JwtPayload;
 
-    if (req.header("HTTP_USER_AGENT")?.slice(0, 3) == "APP") {
+    if (
+      req.header("HTTP_USER_AGENT")?.slice(0, 3) == "APP" ||
+      req.header("USER") === "EMPLOYEE"
+    ) {
       //CHECKING IF USER EXISTS
       const employee = await EmployeeModel.findById(_id);
       if (!employee) {
@@ -44,7 +47,7 @@ const authFunction = async (
       req.employee = employee;
       req.token = token;
       next();
-    } else if (req.header("HTTP_USER_AGENT")?.slice(0, 3) == "WEB") {
+    } else if (req.header("USER") === "USER") {
       //CHECKING IF USER EXISTS
       const user = await UserModel.findById(_id);
       if (!user) {
