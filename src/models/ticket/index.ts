@@ -8,7 +8,7 @@ export interface ITicketDocument extends Document {
   applicationId: Schema.Types.ObjectId | undefined;
   documentId: string | undefined;
   //   startDate: Date;
-  dueDate: Date;
+  dueDate: Date | undefined;
   priority: Number; //priorityEnum;
   //TODO   status:
 }
@@ -38,10 +38,7 @@ export const TicketSchema = new Schema<ITicketDocument>(
       type: Schema.Types.ObjectId,
     },
 
-    dueDate: {
-      type: Date,
-      required: true,
-    },
+    dueDate: Date,
     priority: {
       type: Number,
       max: 3,

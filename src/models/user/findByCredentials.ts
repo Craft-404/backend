@@ -28,6 +28,6 @@ export const findByCredentials = async (
       .send(AUTHENTICATION_ERROR.message);
   }
 
-  //IF EVERYTHING IS IN ORDER, RETURN employee
+  //IF EVERYTHING IS IN ORDER, RETURN user
   return user;
 };

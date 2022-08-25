@@ -1,4 +1,7 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Model } from "mongoose";
+import { findByCredentials } from "./findByCredentials";
+import { generateAuthToken } from "./generateAuthToken";
+// import toJSON from "./toJson";
 
 export interface IUserDocument extends Document {
   name: string;
@@ -8,6 +11,23 @@ export interface IUserDocument extends Document {
   password: string;
   tenthURL: string | undefined;
   twelthURL: string | undefined;
+  token: string | undefined;
+}
+
+//Employee INTERFACE WITH METHODS
+export interface IUser extends IUserDocument {
+  generateAuthToken(this: IUserDocument): Promise<string>;
+  toJSON(this: IUserDocument): Promise<IUserDocument>;
+}
+
+//User INTERFACE WITH STATICS
+export interface IUserModel extends Model<IUser> {
+  findByCredentials(
+    email: string,
+    password: string,
+    req: Request,
+    res: Response
+  ): Promise<IUser>;
 }
 
 //Employee SCHEMA
@@ -40,11 +60,19 @@ export const UserSchema = new Schema<IUserDocument>(
     twelthURL: {
       type: String,
     },
+    token: String,
   },
   {
     timestamps: true,
   }
 );
+
+UserSchema.methods.generateAuthToken = generateAuthToken;
+
+//FIND BY CREDENTIALS STATIC METHOD ON SCHEMA
+UserSchema.statics.findByCredentials = findByCredentials;
+
+// UserSchema.methods.toJSON = toJSON;
 
 //EXPORTING MODEL
 export const UserModel = model<IUserDocument>("User", UserSchema);
