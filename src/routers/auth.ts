@@ -43,7 +43,7 @@ router.post("/login", async (req: Request, res: Response) => {
 
 router.use(authFunction);
 
-router.patch("/verify", async (req: Request, res: Response) => {
+router.patch("/employee/fcm", async (req: Request, res: Response) => {
   try {
     const { fcmToken } = req.body;
     req.employee.fcmToken = fcmToken;

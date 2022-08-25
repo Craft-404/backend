@@ -6,10 +6,11 @@ export interface ITicketDocument extends Document {
   reporter: Schema.Types.ObjectId;
   description: string | undefined;
   //   bucketId: Schema.Types.ObjectId;
-  documentLink: string | undefined;
+  documentId: string | undefined;
   //   startDate: Date;
   dueDate: Date;
   priority: priorityEnum;
+  //TODO   status:
 }
 
 //Employee SCHEMA
@@ -36,8 +37,8 @@ export const TicketSchema = new Schema<ITicketDocument>(
     //   type: Schema.Types.ObjectId,
     //   required: true,
     // },
-    documentLink: {
-      type: String,
+    documentId: {
+      type: Schema.Types.ObjectId,
     },
     // startDate: {
     //   type: Date,
