@@ -6,7 +6,9 @@
   "scripts": {
     "start": "npm run build && node dist/server.js",
     "dev": "nodemon src/server.ts",
-    "build": "rm -rf dist && tsc -p ."
+    "build": "rm -rf dist && tsc -p .",
+    "postinstall": "npm run tsc",
+    "tsc": "tsc"
   },
   "keywords": [],
   "author": "",
