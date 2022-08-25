@@ -19,18 +19,14 @@ router.post("/", async (req: any, res: Response) => {
   }
 });
 
-router.post("/login", async (req: any, res: any) => {
+router.post("/login", async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
     const user = await UserModel.findByCredentials(email, password, req, res);
     await user.generateAuthToken();
     return res.status(200).send(user);
   } catch (e: any) {
-    if (e.status && e.message) return res.status(e.status).send(e);
-    else
-      return res
-        .status(INTERNAL_SERVER_ERROR.status)
-        .send(INTERNAL_SERVER_ERROR);
+    return res.send(INTERNAL_SERVER_ERROR);
   }
 });
 

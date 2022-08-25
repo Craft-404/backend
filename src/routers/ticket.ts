@@ -1,11 +1,12 @@
 import { Router, Request, Response } from "express";
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import authFunction from "../middlewares/auth";
 import {
   ADMIN,
   BAD_REQUEST_ERROR,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND_ERROR,
+  RESOURCE_CREATED,
   RESOURCE_UPDATED,
   RESTRICTED_ERROR,
 } from "../middlewares/constants";
@@ -20,7 +21,10 @@ router.post("/", async (req: Request, res: Response) => {
   const session = await mongoose.startSession();
   try {
     await session.withTransaction(async () => {
-      const ticket = new TicketModel(req.body);
+      const ticket = new TicketModel({
+        ...req.body,
+        reporter: req.employee._id,
+      });
       await ticket.save({ session });
       const assignees = req.body.assignees;
       if (assignees.length === 0 || !assignees)
@@ -28,13 +32,14 @@ router.post("/", async (req: Request, res: Response) => {
       await Promise.all(
         assignees.map(async (assigneeId: string) => {
           const taskAssignee = new TicketAssigneeModel({
-            employee: assigneeId,
+            employeeId: assigneeId,
             ticketId: ticket._id,
           });
           await taskAssignee.save({ session });
         })
       );
     });
+    return res.status(201).send(RESOURCE_CREATED);
   } catch (e: any) {
     if (e.status) return res.status(e.status).send(e.message);
     else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
@@ -51,35 +56,74 @@ router.patch("/:_id", async (req: Request, res: Response) => {
     let ticket = await TicketModel.findById(_id);
     if (!ticket)
       return res.status(NOT_FOUND_ERROR.status).send(NOT_FOUND_ERROR);
+    console.log();
     let isAuthenticated = false;
-    let ticketAssignees = await TicketAssigneeModel.find({ ticketId: _id });
-    let ticketAssigneeIDs = ticketAssignees.map((ticket) => {
-      return ticket.employeeId;
+    let ticketAssignee = await TicketAssigneeModel.find({
+      ticketId: _id,
+      employeeId: req.employee._id,
     });
+
     const designation = await DesignationModel.findById(
       req.employee.designationId
     );
-    if (
-      [ticket.reporter.toString(), ...ticketAssigneeIDs].includes(
-        req.employee._id
-      ) ||
-      designation?.name === ADMIN
-    )
-      isAuthenticated = true;
+    if (ticketAssignee || designation?.name === ADMIN) isAuthenticated = true;
     if (!isAuthenticated)
       return res.status(RESTRICTED_ERROR.status).send(RESTRICTED_ERROR);
-    ticket = {
-      ...ticket,
-      ...req.body,
-    };
+    const { status, priority } = req.body;
+    if (status) ticket.status = status;
+    if (priority) ticket.priority = priority;
+    // console.log(ticket);
+    // console.log(req.body);
     await ticket!.save();
     return res.status(RESOURCE_UPDATED.status).send(ticket);
   } catch (e: any) {
+    console.log(e);
     if (e.status) return res.status(e.status).send(e.message);
     else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
   }
 });
 
-router.get("/", async (req: Request, res: Response) => {});
+router.get("/all", async (req: Request, res: Response) => {
+  try {
+    console.log(req.employee);
+    const ticketAssignee = await TicketAssigneeModel.find({
+      employeeId: req.employee._id,
+    });
+
+    let tickets: Schema.Types.ObjectId[] = [];
+    ticketAssignee.map((ticket) => tickets.push(ticket.ticketId));
+
+    const finalTickets = await TicketModel.find({ _id: { $in: tickets } });
+    console.log(finalTickets);
+    return res.status(200).send(finalTickets);
+  } catch (e: any) {
+    if (e.status) return res.status(e.status).send(e);
+    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
+  }
+});
+
+router.get("/:_id", async (req: Request, res: Response) => {
+  try {
+    const { _id } = req.params;
+    const ticketAssignee = await TicketAssigneeModel.findOne({
+      ticketId: _id,
+      employeeId: req.employee._id,
+    });
+    const ticket = await TicketModel.findById(_id);
+    const designation = await DesignationModel.findById(
+      req.employee.designationId
+    );
+    if (
+      designation?.name === ADMIN ||
+      ticketAssignee ||
+      ticket!.reporter.toString() == req.employee._id
+    ) {
+      return res.status(200).send(ticket);
+    }
+  } catch (e: any) {
+    if (e.status) return res.status(e.status).send(e);
+    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
+  }
+});
 
 export default router;

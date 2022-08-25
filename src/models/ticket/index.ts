@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import {
+  CREATED,
   STATUSES,
   STATUS_ENUM,
   TICKET_TYPE_ENUM,
@@ -58,6 +59,7 @@ export const TicketSchema = new Schema<ITicketDocument>(
     status: {
       type: String,
       enum: STATUSES,
+      default: CREATED,
     },
     remarks: {
       type: String,

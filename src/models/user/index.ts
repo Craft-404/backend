@@ -2,6 +2,7 @@ import { Schema, model, Model } from "mongoose";
 import { findByCredentials } from "./findByCredentials";
 import { generateAuthToken } from "./generateAuthToken";
 // import toJSON from "./toJson";
+import { Request, Response } from "express";
 
 export interface IUserDocument extends Document {
   name: string;
