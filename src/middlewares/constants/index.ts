@@ -37,9 +37,20 @@ const INTERNAL_SERVER_ERROR: StandardResponse = {
   message: "Internal Server Error.",
 };
 
+export const RESTRICTED_ERROR: StandardResponse = {
+  message: "Do not have sufficient privileges!",
+  status: 403,
+};
 const MEDIUM = "Medium";
 const HIGH = "High";
 const LOW = "Low";
+
+export const LEVEL_ONE = "Level 1";
+export const LEVEL_TWO = "Level 2";
+export const LEVEL_THREE = "Level 3";
+export const ADMIN = "Admin";
+
+export const DESIGNATIONS = [LEVEL_ONE, LEVEL_TWO, LEVEL_THREE, ADMIN];
 
 export const PRIORITY = [LOW, MEDIUM, HIGH];
 

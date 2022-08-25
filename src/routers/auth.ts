@@ -1,5 +1,13 @@
 import { Router, Request, Response } from "express";
-import { NOT_FOUND_ERROR } from "../middlewares/constants";
+import {
+  ADMIN,
+  NOT_FOUND_ERROR,
+  AUTHENTICATION_ERROR,
+  LEVEL_THREE,
+  LEVEL_ONE,
+  LEVEL_TWO,
+  RESTRICTED_ERROR,
+} from "../middlewares/constants";
 import authFunction from "../middlewares/auth";
 import {
   INTERNAL_SERVER_ERROR,
@@ -7,20 +15,11 @@ import {
   RESOURCE_UPDATED,
 } from "../middlewares/constants";
 import { EmployeeModel } from "../models/employee";
+import { DesignationModel } from "../models/designation";
+import { BureauModel } from "../models/bureau";
 const router = Router();
 
 //TODO protect this path according to role
-router.post("/", async (req: Request, res: Response) => {
-  try {
-    const employee = new EmployeeModel(req.body);
-    await employee.save();
-    // const token = await employee.generateAuthToken();
-    return res.status(RESOURCE_CREATED.status).send(employee);
-  } catch (e: any) {
-    if (e.status) return res.status(e.status).send(e.message);
-    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
-  }
-});
 
 router.post("/login", async (req: Request, res: Response) => {
   try {
@@ -43,6 +42,43 @@ router.post("/login", async (req: Request, res: Response) => {
 });
 
 router.use(authFunction);
+
+router.post("/", async (req: Request, res: Response) => {
+  try {
+    let isAuthenticated = false;
+    const employeeDesignation = await DesignationModel.findById(
+      req.employee.designationId
+    );
+    const designation = await DesignationModel.findById(req.body.designationId);
+    const employeeBureau = await BureauModel.findById(req.employee.bureauId);
+    const bureau = await BureauModel.findById(req.body.bureauId);
+    if (!employeeDesignation || !employeeBureau || !bureau || !designation)
+      return res.status(AUTHENTICATION_ERROR.status).send(AUTHENTICATION_ERROR);
+    if (employeeDesignation.name === ADMIN) isAuthenticated = true;
+    else if (
+      req.body.bureauId == req.employee.bureauId &&
+      employeeDesignation.name === LEVEL_THREE
+    ) {
+      if ([LEVEL_ONE, LEVEL_TWO].includes(designation.name))
+        isAuthenticated = true;
+    } else if (
+      req.body.bureauId == req.employee.bureauId &&
+      employeeDesignation.name == LEVEL_TWO
+    ) {
+      if (designation.name === LEVEL_ONE) isAuthenticated = true;
+    }
+    if (!isAuthenticated)
+      return res.status(RESTRICTED_ERROR.status).send(RESTRICTED_ERROR);
+
+    const employee = new EmployeeModel(req.body);
+    await employee.save();
+    // const token = await employee.generateAuthToken();
+    return res.status(RESOURCE_CREATED.status).send(employee);
+  } catch (e: any) {
+    if (e.status) return res.status(e.status).send(e.message);
+    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
+  }
+});
 
 router.patch("/employee/fcm", async (req: Request, res: Response) => {
   try {

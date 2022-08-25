@@ -17,6 +17,8 @@ export interface IEmployeeDocument extends Document {
   username: string;
   dateOfJoining: Date;
   fcmToken: string | undefined;
+  bureauId: Schema.Types.ObjectId;
+  designationId: Schema.Types.ObjectId;
 }
 
 //Employee INTERFACE WITH METHODS
@@ -85,6 +87,14 @@ export const EmployeeSchema = new Schema<IEmployee>(
     },
     fcmToken: {
       type: String,
+    },
+    bureauId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+    },
+    designationId: {
+      type: Schema.Types.ObjectId,
+      required: true,
     },
   },
   {

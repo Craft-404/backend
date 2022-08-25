@@ -41,8 +41,9 @@ export const TicketSchema = new Schema<ITicketDocument>(
     dueDate: Date,
     priority: {
       type: Number,
-      max: 3,
+      max: 5,
       min: 1,
+      default: 3,
     },
     applicationId: {
       type: Schema.Types.ObjectId,

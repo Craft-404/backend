@@ -25,6 +25,8 @@ export const SEED_EMPLOYEE_DATA = {
   password: "abcd1234",
   doj: "2020-12-03",
   username: "deep",
+  designationId: "630749082d9754bace7d6d03",
+  bureauId: "6306fdce5e6d5b3c5355535c",
 };
 
 export const BUREAU_DATA = ["Administration", "Finance", "Approval"];
