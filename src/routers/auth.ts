@@ -13,8 +13,9 @@ const router = Router();
 router.post("/", async (req: Request, res: Response) => {
   try {
     const employee = new EmployeeModel(req.body);
-    const token = await employee.generateAuthToken();
-    return res.status(RESOURCE_CREATED.status).send({ ...employee, token });
+    await employee.save();
+    // const token = await employee.generateAuthToken();
+    return res.status(RESOURCE_CREATED.status).send(employee);
   } catch (e: any) {
     if (e.status) return res.status(e.status).send(e.message);
     else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
