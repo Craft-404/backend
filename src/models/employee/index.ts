@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
-import { model, Schema, Document, Model } from "mongoose";
+import { model, Schema, Document, Model, PopulatedDoc } from "mongoose";
+import { BureauModel, IBureauDocument } from "../bureau";
+import { DesignationModel, IDesignationDocument } from "../designation";
 import { findByCredentials } from "./findByCredentials";
 import { generateAuthToken } from "./generateAuthToken";
 // import postRemove from "./postRemove";
@@ -17,8 +19,8 @@ export interface IEmployeeDocument extends Document {
   username: string;
   dateOfJoining: Date;
   fcmToken: string | undefined;
-  bureauId: Schema.Types.ObjectId;
-  designationId: Schema.Types.ObjectId;
+  bureauId: PopulatedDoc<IBureauDocument>;
+  designationId: PopulatedDoc<IDesignationDocument>;
 }
 
 //Employee INTERFACE WITH METHODS
@@ -80,6 +82,7 @@ export const EmployeeSchema = new Schema<IEmployee>(
       type: String,
       required: true,
       immutable: true,
+      unique: true,
     },
     dateOfJoining: {
       type: Date,
@@ -91,10 +94,12 @@ export const EmployeeSchema = new Schema<IEmployee>(
     bureauId: {
       type: Schema.Types.ObjectId,
       required: true,
+      ref: BureauModel,
     },
     designationId: {
       type: Schema.Types.ObjectId,
       required: true,
+      ref: DesignationModel,
     },
   },
   {

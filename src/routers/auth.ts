@@ -13,7 +13,7 @@ import {
 } from "../middlewares/constants";
 import { EmployeeModel } from "../models/employee";
 import { DesignationModel } from "../models/designation";
-import { BureauModel } from "../models/bureau";
+import { BureauModel, IBureauDocument } from "../models/bureau";
 const router = Router();
 
 //TODO protect this path according to role
