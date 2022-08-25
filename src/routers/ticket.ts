@@ -4,6 +4,7 @@ import authFunction from "../middlewares/auth";
 import {
   ADMIN,
   BAD_REQUEST_ERROR,
+  COMPLETED,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND_ERROR,
   RESOURCE_CREATED,
@@ -11,7 +12,7 @@ import {
   RESTRICTED_ERROR,
 } from "../middlewares/constants";
 import { TicketAssigneeModel } from "../models/ticketAsssignee";
-import { TicketModel } from "../models/ticket";
+import { ITicketDocument, TicketModel } from "../models/ticket";
 import { DesignationModel } from "../models/designation";
 const router = Router();
 
@@ -79,6 +80,59 @@ router.patch("/:_id", async (req: Request, res: Response) => {
   } catch (e: any) {
     console.log(e);
     if (e.status) return res.status(e.status).send(e.message);
+    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
+  }
+});
+
+router.get("/date", async (req: Request, res: Response) => {
+  try {
+    const { endDate, overdue } = req.body;
+    const ticketAssignee = await TicketAssigneeModel.find({
+      employeeId: req.employee._id,
+    });
+    let ticketIds: Schema.Types.ObjectId[] = [];
+    ticketAssignee.map((t) => {
+      ticketIds.push(t.ticketId);
+    });
+
+    if (overdue) {
+      const overdue = await TicketModel.find({
+        _id: { $in: ticketIds },
+        dueDate: { $lte: new Date(endDate) },
+        status: { $ne: COMPLETED },
+      });
+      return res.status(200).send({ tasks: overdue });
+    }
+    const { startDate } = req.body;
+    const tasks = await TicketModel.find({
+      _id: { $in: ticketIds },
+      dueDate: { $lte: new Date(endDate) },
+      startDate: { $gte: new Date(startDate) },
+      status: { $ne: COMPLETED },
+    });
+    return res.status(200).send(tasks);
+  } catch (e: any) {
+    if (e.status) return res.status(e.status).send(e);
+    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
+  }
+});
+
+router.get("/completed", async (req: Request, res: Response) => {
+  try {
+    const ticketAssignee = await TicketAssigneeModel.find({
+      employeeId: req.employee._id,
+    });
+    let ticketIds: Schema.Types.ObjectId[] = [];
+    ticketAssignee.map((t) => {
+      ticketIds.push(t.ticketId);
+    });
+    const tasks = await TicketModel.find({
+      _id: { $in: ticketIds },
+      status: COMPLETED,
+    });
+    return res.status(200).send(tasks);
+  } catch (e: any) {
+    if (e.status) return res.status(e.status).send(e);
     else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
   }
 });
