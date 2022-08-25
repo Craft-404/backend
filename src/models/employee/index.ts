@@ -4,6 +4,7 @@ import { findByCredentials } from "./findByCredentials";
 import { generateAuthToken } from "./generateAuthToken";
 // import postRemove from "./postRemove";
 import { preSave } from "./preSave";
+import toJSON from "./toJson";
 
 //Employee INTERFACE
 export interface IEmployeeDocument extends Document {
@@ -21,6 +22,7 @@ export interface IEmployeeDocument extends Document {
 //Employee INTERFACE WITH METHODS
 export interface IEmployee extends IEmployeeDocument {
   generateAuthToken(this: IEmployeeDocument): Promise<string>;
+  toJSON(this: IEmployeeDocument): Promise<IEmployeeDocument>;
 }
 
 //Employee INTERFACE WITH STATICS
@@ -101,6 +103,8 @@ EmployeeSchema.methods.generateAuthToken = generateAuthToken;
 
 //FIND BY CREDENTIALS STATIC METHOD ON SCHEMA
 EmployeeSchema.statics.findByCredentials = findByCredentials;
+
+EmployeeSchema.methods.toJSON = toJSON;
 
 //EXPORTING MODEL
 export const EmployeeModel = model<IEmployee, IEmployeeModel>(
