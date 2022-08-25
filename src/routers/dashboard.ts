@@ -12,7 +12,7 @@ import {
   TASK,
 } from "../middlewares/constants";
 import { AnnouncementModel } from "../models/announcement";
-import { BureauModel } from "../models/bureau";
+import { BureauModel, IBureauDocument } from "../models/bureau";
 import { DesignationModel } from "../models/designation";
 import { TicketModel } from "../models/ticket";
 import { TicketAssigneeModel } from "../models/ticketAsssignee";
@@ -47,7 +47,9 @@ router.get("/", async (req: Request, res: Response) => {
     const bureau = await BureauModel.findById(req.employee.bureauId);
     const announcements = await AnnouncementModel.find({
       bureauId: bureau?._id,
-    }).limit(3);
+    })
+      .limit(3)
+      .populate<{ bureauId: IBureauDocument }>("bureauId");
     return res.status(200).send({ approvals, announcements, tasks, overdue });
   } catch (e: any) {
     if (e.status) return res.status(e.status).send(e.message);

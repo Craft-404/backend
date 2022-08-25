@@ -1,8 +1,10 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, PopulatedDoc } from "mongoose";
+import { ISchemeDocument, SchemeModel } from "../scheme";
+import { IUserDocument, UserModel } from "../user";
 
 export interface IApplicationDocument extends Document {
-  scheme: Schema.Types.ObjectId;
-  userId: Schema.Types.ObjectId;
+  scheme: PopulatedDoc<ISchemeDocument>;
+  userId: PopulatedDoc<IUserDocument>;
   status: Number;
   applicationFormLink: String | undefined;
 }
@@ -12,10 +14,12 @@ export const ApplicationSchema = new Schema<IApplicationDocument>(
     scheme: {
       type: Schema.Types.ObjectId,
       required: true,
+      ref: SchemeModel,
     },
     userId: {
       type: Schema.Types.ObjectId,
       required: true,
+      ref: UserModel,
     },
     status: {
       type: Number,

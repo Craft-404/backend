@@ -1,8 +1,9 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, PopulatedDoc } from "mongoose";
+import { BureauModel, IBureauDocument } from "../bureau";
 
 export interface IAnnouncementDocument extends Document {
   name: string;
-  bureauId: Schema.Types.ObjectId;
+  bureauId: PopulatedDoc<IBureauDocument>;
 }
 
 export const AnnouncementSchema = new Schema<IAnnouncementDocument>(
@@ -14,6 +15,7 @@ export const AnnouncementSchema = new Schema<IAnnouncementDocument>(
     bureauId: {
       required: true,
       type: Schema.Types.ObjectId,
+      ref: BureauModel,
     },
   },
   {
