@@ -16,9 +16,10 @@ router.use(authFunction);
 router.get("/", async (req: Request, res: Response) => {
   try {
     var years = moment().diff(req.user.dob, "years", false);
+    console.log(years);
     const schemes = await SchemeModel.find({
-      minAge: { $gte: years },
-      maxAge: { $lte: years },
+      minAge: { $lte: years },
+      maxAge: { $gte: years },
     });
     return res.status(200).send(schemes);
   } catch (e: any) {
