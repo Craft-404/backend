@@ -3,9 +3,6 @@ import {
   ADMIN,
   NOT_FOUND_ERROR,
   AUTHENTICATION_ERROR,
-  LEVEL_THREE,
-  LEVEL_ONE,
-  LEVEL_TWO,
   RESTRICTED_ERROR,
 } from "../middlewares/constants";
 import authFunction from "../middlewares/auth";
@@ -49,24 +46,31 @@ router.post("/", async (req: Request, res: Response) => {
     const employeeDesignation = await DesignationModel.findById(
       req.employee.designationId
     );
+    // console.log("hi");
+    // console.log(employeeDesignation!.name === ADMIN);
+    // console.log(
+    //   req.body.bureauId == req.employee.bureauId &&
+    //     employeeDesignation!.name === LEVEL_THREE
+    // );
+
     const designation = await DesignationModel.findById(req.body.designationId);
     const employeeBureau = await BureauModel.findById(req.employee.bureauId);
     const bureau = await BureauModel.findById(req.body.bureauId);
     if (!employeeDesignation || !employeeBureau || !bureau || !designation)
       return res.status(AUTHENTICATION_ERROR.status).send(AUTHENTICATION_ERROR);
     if (employeeDesignation.name === ADMIN) isAuthenticated = true;
-    else if (
-      req.body.bureauId == req.employee.bureauId &&
-      employeeDesignation.name === LEVEL_THREE
-    ) {
-      if ([LEVEL_ONE, LEVEL_TWO].includes(designation.name))
-        isAuthenticated = true;
-    } else if (
-      req.body.bureauId == req.employee.bureauId &&
-      employeeDesignation.name == LEVEL_TWO
-    ) {
-      if (designation.name === LEVEL_ONE) isAuthenticated = true;
-    }
+    // else if (
+    //   req.body.bureauId == req.employee.bureauId &&
+    //   employeeDesignation.name === LEVEL_THREE
+    // ) {
+    //   if ([LEVEL_ONE, LEVEL_TWO].includes(designation.name))
+    //     isAuthenticated = true;
+    // } else if (
+    //   req.body.bureauId == req.employee.bureauId &&
+    //   employeeDesignation.name == LEVEL_TWO
+    // ) {
+    //   if (designation.name === LEVEL_ONE) isAuthenticated = true;
+    // }
     if (!isAuthenticated)
       return res.status(RESTRICTED_ERROR.status).send(RESTRICTED_ERROR);
 

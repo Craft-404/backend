@@ -30,6 +30,7 @@ const authFunction = async (
         .status(AUTHENTICATION_ERROR.status)
         .send(AUTHENTICATION_ERROR.message);
     }
+    console.log("hi");
     //DECODING TOKEN
     const { _id } = jwt.verify(token, secret) as JwtPayload;
 

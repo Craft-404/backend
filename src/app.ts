@@ -11,6 +11,7 @@ import ticketRouter from "./routers/ticket";
 import employeeRouter from "./routers/employee";
 import announcementRouter from "./routers/announcement";
 import dashboardRouter from "./routers/dashboard";
+import designationRouter from "./routers/designation";
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/bureau", bureauRouter);
@@ -18,5 +19,6 @@ app.use("/api/v1/ticket", ticketRouter);
 app.use("/api/v1/employee", employeeRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
 app.use("/api/v1/announcement", announcementRouter);
+app.use("/api/v1/designation", designationRouter);
 
 export default app;

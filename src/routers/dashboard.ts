@@ -37,7 +37,7 @@ router.get("/", async (req: Request, res: Response) => {
     const overdue = await TicketModel.find({
       _id: { $in: tickets },
       status: { $in: [IN_PROCESS, CREATED] },
-      dueDate: { lte: new Date(Date.now()) },
+      dueDate: { $lte: new Date(Date.now()) },
     });
     const approvals = await TicketModel.find({
       _id: { $in: tickets },
