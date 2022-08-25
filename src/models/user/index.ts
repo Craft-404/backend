@@ -3,6 +3,7 @@ import { findByCredentials } from "./findByCredentials";
 import { generateAuthToken } from "./generateAuthToken";
 // import toJSON from "./toJson";
 import { Request, Response } from "express";
+import preSave from "./preSave";
 
 export interface IUserDocument extends Document {
   name: string;
@@ -71,6 +72,8 @@ export const UserSchema = new Schema<IUserDocument>(
     timestamps: true,
   }
 );
+
+UserSchema.pre("save", preSave);
 
 UserSchema.methods.generateAuthToken = generateAuthToken;
 

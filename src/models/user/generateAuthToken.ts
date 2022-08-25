@@ -20,5 +20,5 @@ export const generateAuthToken = async function (
 
   //SAVING user AND RETURNING THE TOKEN
   await user.save();
-  return user;
+  return token;
 };

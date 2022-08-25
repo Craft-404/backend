@@ -51,6 +51,7 @@ const authFunction = async (
     } else if (req.header("USER") === "USER") {
       //CHECKING IF USER EXISTS
       const user = await UserModel.findById(_id);
+      console.log(user);
       if (!user) {
         return res.status(NOT_FOUND_ERROR.status).send(NOT_FOUND_ERROR.message);
       }

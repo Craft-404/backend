@@ -13,6 +13,7 @@ router.post("/", async (req: any, res: Response) => {
   try {
     const user = new UserModel(req.body);
     await user.save();
+    return res.status(RESOURCE_CREATED.status).send(user);
   } catch (e: any) {
     if (e.status) return res.status(e.status).send(e.message);
     else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
@@ -21,11 +22,16 @@ router.post("/", async (req: any, res: Response) => {
 
 router.post("/login", async (req: Request, res: Response) => {
   try {
+    console.log("hi");
     const { email, password } = req.body;
+    console.log(email, password);
     const user = await UserModel.findByCredentials(email, password, req, res);
-    await user.generateAuthToken();
-    return res.status(200).send(user);
+    // user.toJSON();
+    console.log(user);
+    const token = await user.generateAuthToken();
+    return res.status(200).send({ user, token });
   } catch (e: any) {
+    console.log(e);
     return res.send(INTERNAL_SERVER_ERROR);
   }
 });
