@@ -1,15 +1,15 @@
 import { Schema, model } from "mongoose";
-import { PRIORITY, priorityEnum } from "../../middlewares/constants";
+// import { PRIORITY, priorityEnum } from "../../middlewares/constants";
 
 export interface ITicketDocument extends Document {
   title: string;
   reporter: Schema.Types.ObjectId;
   description: string | undefined;
-  //   bucketId: Schema.Types.ObjectId;
+  applicationId: Schema.Types.ObjectId | undefined;
   documentId: string | undefined;
   //   startDate: Date;
   dueDate: Date;
-  priority: priorityEnum;
+  priority: Number; //priorityEnum;
   //TODO   status:
 }
 
@@ -33,24 +33,22 @@ export const TicketSchema = new Schema<ITicketDocument>(
     description: {
       type: String,
     },
-    // bucketId: {
-    //   type: Schema.Types.ObjectId,
-    //   required: true,
-    // },
+
     documentId: {
       type: Schema.Types.ObjectId,
     },
-    // startDate: {
-    //   type: Date,
-    //   default: Date.now(),
-    // },
+
     dueDate: {
       type: Date,
       required: true,
     },
     priority: {
-      type: String,
-      enum: PRIORITY,
+      type: Number,
+      max: 3,
+      min: 1,
+    },
+    applicationId: {
+      type: Schema.Types.ObjectId,
     },
   },
   {
