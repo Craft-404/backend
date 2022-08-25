@@ -12,6 +12,7 @@ export interface IUserDocument extends Document {
   tenthURL: string | undefined;
   twelthURL: string | undefined;
   token: string | undefined;
+  _id: string;
 }
 
 //Employee INTERFACE WITH METHODS
@@ -44,6 +45,7 @@ export const UserSchema = new Schema<IUserDocument>(
     phone: {
       type: String,
       required: true,
+      unique: true,
     },
     email: {
       type: String,
@@ -60,7 +62,9 @@ export const UserSchema = new Schema<IUserDocument>(
     twelthURL: {
       type: String,
     },
-    token: String,
+    token: {
+      type: String,
+    },
   },
   {
     timestamps: true,
@@ -75,4 +79,4 @@ UserSchema.statics.findByCredentials = findByCredentials;
 // UserSchema.methods.toJSON = toJSON;
 
 //EXPORTING MODEL
-export const UserModel = model<IUserDocument>("User", UserSchema);
+export const UserModel = model<IUser, IUserModel>("User", UserSchema);

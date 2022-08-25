@@ -1,9 +1,9 @@
-// import { IUser, IUserDocument, IUserModel } from ".";
+// import { IUserDocument } from ".";
 
 // const toJSON = function (this: IUserDocument) {
 //   const user = this;
-//   const userObject ;
-//   delete userObject.password;
+//   const userObject = this.toObject();
+// //   delete userObject.password;
 //   return userObject;
 // };
 
