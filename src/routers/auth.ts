@@ -47,6 +47,7 @@ router.patch("/employee/fcm", async (req: Request, res: Response) => {
   try {
     const { fcmToken } = req.body;
     req.employee.fcmToken = fcmToken;
+    console.log("fcm token: ", req.employee);
     await req.employee.save();
     return res.status(RESOURCE_UPDATED.status).send(RESOURCE_UPDATED);
   } catch (e: any) {

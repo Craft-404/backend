@@ -21,21 +21,18 @@ const authFunction = async (
 ) => {
   try {
     //CHECKING IF TOKEN IS PRESENT IN HEADER
-    const token = req.header("tokenorization");
+    const token = req.header("Authorization");
     if (!token || NULL_ARRAY.includes(token)) {
       return res
         .status(AUTHENTICATION_ERROR.status)
         .send(AUTHENTICATION_ERROR.message);
     }
-
     //DECODING TOKEN
     const { _id } = jwt.verify(token, secret) as JwtPayload;
 
     //CHECKING IF USER EXISTS
-    const employee = await EmployeeModel.findOne({
-      _id,
-      token,
-    });
+    const employee = await EmployeeModel.findById(_id);
+    console.log(employee);
     if (!employee) {
       return res.status(NOT_FOUND_ERROR.status).send(NOT_FOUND_ERROR.message);
     }
