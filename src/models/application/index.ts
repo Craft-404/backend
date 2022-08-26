@@ -24,6 +24,7 @@ export const ApplicationSchema = new Schema<IApplicationDocument>(
     },
     status: {
       type: Number,
+      default: 0,
     },
     documentLink: {
       type: String,
