@@ -35,6 +35,7 @@ router.get("/", async (req: Request, res: Response) => {
       _id: { $in: tickets },
       status: { $in: [IN_PROCESS, CREATED] },
       category: TASK,
+      applicationId: { $exists: false },
     })
       .limit(3)
       .populate<{ reporter: IEmployeeDocument }>("reporter", "id name")
@@ -50,6 +51,7 @@ router.get("/", async (req: Request, res: Response) => {
       _id: { $in: tickets },
       status: { $in: [IN_PROCESS, CREATED] },
       category: APPROVAL,
+      applicationId: { $exists: true },
     })
       .limit(3)
       .populate<{ reporter: IEmployeeDocument }>("reporter", "id name")
