@@ -17,6 +17,7 @@ import { DesignationModel } from "../models/designation";
 import { IUserDocument } from "../models/user";
 import { ApplicationModel } from "../models/application";
 import { EmployeeModel } from "../models/employee";
+import { CANCELLED } from "dns";
 const router = Router();
 
 router.use(authFunction);
@@ -70,7 +71,7 @@ router.get("/task", async (req: Request, res: Response) => {
       const overdue = await TicketModel.find({
         _id: { $in: ticketIds },
         dueDate: { $lte: new Date(endDate!.toString()) },
-        status: { $ne: COMPLETED },
+        status: { $nin: [COMPLETED, CANCELLED] },
         applicationId: { $exists: false },
       }).populate<{ reporter: IUserDocument }>("reporter", "id name");
       return res.status(200).send({ tasks: overdue });
@@ -83,7 +84,7 @@ router.get("/task", async (req: Request, res: Response) => {
         { dueDate: { $lte: new Date(endDate!.toString()) } },
         { dueDate: { $gte: new Date(startDate!.toString()) } },
       ],
-      status: { $ne: COMPLETED },
+      status: { $ne: [COMPLETED, CANCELLED] },
       applicationId: { $exists: false },
     }).populate<{ reporter: IUserDocument }>("reporter", "id name");
     return res.status(200).send(tasks);
@@ -104,7 +105,7 @@ router.get("/approval", async (req: Request, res: Response) => {
     const approvals = await TicketModel.find({
       _id: { $in: ticketAssigneeIds },
       applicationId: { $exists: true },
-      status: { $ne: COMPLETED },
+      status: { $ne: [COMPLETED, CANCELLED] },
       category: "Approval",
     });
     return res.status(200).send(approvals);
