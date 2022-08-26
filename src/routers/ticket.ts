@@ -108,7 +108,7 @@ router.get("/approval", async (req: Request, res: Response) => {
       applicationId: { $exists: true },
       status: { $nin: [COMPLETED, CANCELLED] },
       category: "Approval",
-    });
+    }).populate<{ userId: IUserDocument }>("userId", "id name");
     return res.status(200).send(approvals);
   } catch (e: any) {
     console.log(e);
