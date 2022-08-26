@@ -1,10 +1,10 @@
 import { Schema, model } from "mongoose";
+import { USER_TYPE, USER_TYPES } from "../../middlewares/constants";
 
 export interface ISchemeDocument extends Document {
   name: string;
-  maxStatus: Number;
-  minAge: Number;
-  maxAge: Number;
+  for: USER_TYPE;
+  description: string | undefined;
 }
 
 //TODO add template document
@@ -15,18 +15,11 @@ export const SchemeSchema = new Schema<ISchemeDocument>(
       type: String,
       required: true,
     },
-    maxStatus: {
-      type: Number,
-      required: true,
+    for: {
+      type: String,
+      enum: USER_TYPES,
     },
-    minAge: {
-      type: Number,
-      required: true,
-    },
-    maxAge: {
-      type: Number,
-      required: true,
-    },
+    description: String,
   },
   {
     timestamps: true,

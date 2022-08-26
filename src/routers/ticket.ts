@@ -80,7 +80,7 @@ router.patch("/:_id", async (req: Request, res: Response) => {
     return res.status(RESOURCE_UPDATED.status).send(ticket);
   } catch (e: any) {
     console.log(e);
-    if (e.status) return res.status(e.status).send(e.message);
+    if (e.status) return res.status(e.status).send(e);
     else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
   }
 });

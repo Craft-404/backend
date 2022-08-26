@@ -4,6 +4,7 @@ import { generateAuthToken } from "./generateAuthToken";
 // import toJSON from "./toJson";
 import { Request, Response } from "express";
 import preSave from "./preSave";
+import { USER_TYPE, USER_TYPES } from "../../middlewares/constants";
 
 export interface IUserDocument extends Document {
   name: string;
@@ -15,6 +16,7 @@ export interface IUserDocument extends Document {
   twelthURL: string | undefined;
   token: string | undefined;
   _id: string;
+  userType: USER_TYPE;
 }
 
 //Employee INTERFACE WITH METHODS
@@ -66,6 +68,11 @@ export const UserSchema = new Schema<IUserDocument>(
     },
     token: {
       type: String,
+    },
+    userType: {
+      type: String,
+      enum: USER_TYPES,
+      required: true,
     },
   },
   {

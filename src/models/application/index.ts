@@ -6,7 +6,7 @@ export interface IApplicationDocument extends Document {
   scheme: PopulatedDoc<ISchemeDocument>;
   userId: PopulatedDoc<IUserDocument>;
   status: Number;
-  applicationFormLink: String | undefined;
+  documentLink: String | undefined;
 }
 
 export const ApplicationSchema = new Schema<IApplicationDocument>(
@@ -24,7 +24,7 @@ export const ApplicationSchema = new Schema<IApplicationDocument>(
     status: {
       type: Number,
     },
-    applicationFormLink: {
+    documentLink: {
       type: String,
     },
   },

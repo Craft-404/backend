@@ -12,13 +12,13 @@ import { EmployeeModel, IEmployeeDocument } from "../employee";
 
 export interface ITicketDocument extends Document {
   title: string;
-  reporter: PopulatedDoc<IEmployeeDocument>; //+
+  reporter: PopulatedDoc<IEmployeeDocument>;
   description: string | undefined;
   applicationId: Schema.Types.ObjectId | undefined;
-  documentId: PopulatedDoc<IDocumentDocument>; //+
+  documentId: PopulatedDoc<IDocumentDocument>;
   remarks: string | undefined;
   dueDate: Date | undefined;
-  priority: Number; //priorityEnum;
+  priority: Number;
   status: STATUS_ENUM;
   category: TICKET_TYPE_ENUM;
 }
