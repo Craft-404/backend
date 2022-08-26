@@ -104,6 +104,7 @@ router.get("/date", async (req: Request, res: Response) => {
       return res.status(200).send({ tasks: overdue });
     }
     const { startDate } = req.body;
+    console.log(startDate, endDate);
     const tasks = await TicketModel.find({
       _id: { $in: ticketIds },
       dueDate: { $lte: new Date(endDate) },
@@ -112,6 +113,7 @@ router.get("/date", async (req: Request, res: Response) => {
     });
     return res.status(200).send(tasks);
   } catch (e: any) {
+    console.log(e);
     if (e.status) return res.status(e.status).send(e);
     else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
   }
