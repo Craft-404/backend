@@ -270,6 +270,7 @@ router.patch("/approval/:_id", async (req: Request, res: Response) => {
       description: `Computer generated: Step ${application!.status!}`,
       dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
       category: "Approval",
+      applicationId: ticket.applicationId,
     });
     console.log(newTicket);
 
