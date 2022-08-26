@@ -86,7 +86,8 @@ router.patch("/:_id", async (req: Request, res: Response) => {
 
 router.get("/date", async (req: Request, res: Response) => {
   try {
-    const { endDate, overdue } = req.query;
+    const { endDate, overdue, startDate } = req.query;
+    console.log(endDate, startDate, overdue);
     const ticketAssignee = await TicketAssigneeModel.find({
       employeeId: req.employee._id,
     });
@@ -103,7 +104,6 @@ router.get("/date", async (req: Request, res: Response) => {
       });
       return res.status(200).send({ tasks: overdue });
     }
-    const { startDate } = req.query;
     console.log(startDate, endDate);
     const tasks = await TicketModel.find({
       _id: { $in: ticketIds },
