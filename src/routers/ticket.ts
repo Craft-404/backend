@@ -208,6 +208,22 @@ router.get("/:_id", async (req: Request, res: Response) => {
   }
 });
 
+router.patch("/cancel/:_id", async (req: Request, res: Response) => {
+  try {
+    const { _id } = req.params;
+    const ticket = await TicketModel.findById(_id);
+    ticket!.status = CANCELLED;
+    const application = await ApplicationModel.findById(ticket!.applicationId);
+    application!.status = -1;
+    await ticket!.save();
+    await application!.save();
+    return res.status(200).send({ application, ticket });
+  } catch (e: any) {
+    if (e.status) return res.status(e.status).send(e);
+    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
+  }
+});
+
 router.patch("/approval/:_id", async (req: Request, res: Response) => {
   try {
     const { _id } = req.params;
