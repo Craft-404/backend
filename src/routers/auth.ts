@@ -28,6 +28,8 @@ router.post("/login", async (req: Request, res: Response) => {
       res
     );
     await employee.generateAuthToken();
+    delete employee.bureauId;
+    delete employee.designationId;
     return res.status(200).send(employee);
   } catch (e: any) {
     if (e.status && e.message) return res.status(e.status).send(e);
