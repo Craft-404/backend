@@ -214,6 +214,7 @@ router.patch("/approval/:_id", async (req: Request, res: Response) => {
       application.status = 2;
       designationId = "630749082d9754bace7d6d02";
     }
+    await application?.save();
     const employee = await EmployeeModel.findOne({
       designationId,
       bureauId: req.employee.bureauId,
@@ -222,7 +223,7 @@ router.patch("/approval/:_id", async (req: Request, res: Response) => {
     let newTicket = new TicketModel({
       reporter: req.employee._id,
       title: ticket.title,
-      description: `Computer generated: Step ${application?.status}`,
+      description: `Computer generated: Step ${application!.status!}`,
       dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
       category: "Approval",
     });
