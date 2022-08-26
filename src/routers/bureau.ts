@@ -19,7 +19,7 @@ router.get("/", async (req: Request, res: Response) => {
       return res.status(NOT_FOUND_ERROR.status).send(NOT_FOUND_ERROR);
     return res.status(200).send(bureaus);
   } catch (e: any) {
-    if (e.status) return res.status(e.status).send(e.message);
+    if (e.status) return res.status(e.status).send(e);
     else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
   }
 });

@@ -6,7 +6,9 @@ const router = Router();
 router.use(authFunction);
 
 router.get("/", async (req: Request, res: Response) => {
-  return res.send(200).send(await DesignationModel.find());
+  const designations = await DesignationModel.find({});
+  console.log(designations);
+  return res.send(200).send(designations);
 });
 
 export default router;
