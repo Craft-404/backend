@@ -52,6 +52,45 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
+router.get("/task", async (req: Request, res: Response) => {
+  try {
+    const { endDate, overdue, startDate } = req.query;
+    const END_DATE = new Date(endDate as string);
+    const START_DATE = new Date(startDate as string);
+    console.log("end: ", END_DATE, "start: ", START_DATE, "overdue: ", overdue);
+    const ticketAssignee = await TicketAssigneeModel.find({
+      employeeId: req.employee._id,
+    });
+    let ticketIds: Schema.Types.ObjectId[] = [];
+    ticketAssignee.map((t) => {
+      ticketIds.push(t.ticketId);
+    });
+
+    if (overdue) {
+      const overdue = await TicketModel.find({
+        _id: { $in: ticketIds },
+        dueDate: { $lte: new Date(endDate!.toString()) },
+        status: { $ne: COMPLETED },
+        applicationId: { $exists: false },
+      }).populate<{ reporter: IUserDocument }>("reporter", "id name");
+      return res.status(200).send({ tasks: overdue });
+    }
+    console.log(startDate, endDate);
+    const tasks = await TicketModel.find({
+      _id: { $in: ticketIds },
+      dueDate: { $lte: new Date(endDate!.toString()) },
+      startDate: { $gte: new Date(startDate!.toString()) },
+      status: { $ne: COMPLETED },
+      applicationId: { $exists: false },
+    }).populate<{ reporter: IUserDocument }>("reporter", "id name");
+    return res.status(200).send(tasks);
+  } catch (e: any) {
+    console.log(e);
+    if (e.status) return res.status(e.status).send(e);
+    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
+  }
+});
+
 router.get("/approval", async (req: Request, res: Response) => {
   try {
     const ticketAssignee = await TicketAssigneeModel.find({
@@ -66,6 +105,71 @@ router.get("/approval", async (req: Request, res: Response) => {
       category: "Approval",
     });
     return res.status(200).send(approvals);
+  } catch (e: any) {
+    if (e.status) return res.status(e.status).send(e);
+    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
+  }
+});
+
+router.get("/completed", async (req: Request, res: Response) => {
+  try {
+    const ticketAssignee = await TicketAssigneeModel.find({
+      employeeId: req.employee._id,
+    });
+    let ticketIds: Schema.Types.ObjectId[] = [];
+    ticketAssignee.map((t) => {
+      ticketIds.push(t.ticketId);
+    });
+    const tasks = await TicketModel.find({
+      _id: { $in: ticketIds },
+      status: COMPLETED,
+    }).populate<{ reporter: IUserDocument }>("reporter", "id name");
+    return res.status(200).send(tasks);
+  } catch (e: any) {
+    if (e.status) return res.status(e.status).send(e);
+    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
+  }
+});
+
+router.get("/all", async (req: Request, res: Response) => {
+  try {
+    console.log(req.employee);
+    const ticketAssignee = await TicketAssigneeModel.find({
+      employeeId: req.employee._id,
+    });
+
+    let tickets: Schema.Types.ObjectId[] = [];
+    ticketAssignee.map((ticket) => tickets.push(ticket.ticketId));
+
+    const finalTickets = await TicketModel.find({
+      _id: { $in: tickets },
+    }).populate<{ reporter: IUserDocument }>("reporter", "id name");
+    console.log(finalTickets);
+    return res.status(200).send(finalTickets);
+  } catch (e: any) {
+    if (e.status) return res.status(e.status).send(e);
+    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
+  }
+});
+
+router.get("/:_id", async (req: Request, res: Response) => {
+  try {
+    const { _id } = req.params;
+    const ticketAssignee = await TicketAssigneeModel.findOne({
+      ticketId: _id,
+      employeeId: req.employee._id,
+    });
+    const ticket = await TicketModel.findById(_id);
+    const designation = await DesignationModel.findById(
+      req.employee.designationId
+    );
+    if (
+      designation?.name === ADMIN ||
+      ticketAssignee ||
+      ticket!.reporter!.toString() == req.employee._id
+    ) {
+      return res.status(200).send(ticket);
+    }
   } catch (e: any) {
     if (e.status) return res.status(e.status).send(e);
     else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
@@ -159,110 +263,6 @@ router.patch("/:_id", async (req: Request, res: Response) => {
     return res.status(RESOURCE_UPDATED.status).send(ticket);
   } catch (e: any) {
     console.log(e);
-    if (e.status) return res.status(e.status).send(e);
-    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
-  }
-});
-
-router.get("/task", async (req: Request, res: Response) => {
-  try {
-    const { endDate, overdue, startDate } = req.query;
-    const END_DATE = new Date(endDate as string);
-    const START_DATE = new Date(startDate as string);
-    console.log("end: ", END_DATE, "start: ", START_DATE, "overdue: ", overdue);
-    const ticketAssignee = await TicketAssigneeModel.find({
-      employeeId: req.employee._id,
-    });
-    let ticketIds: Schema.Types.ObjectId[] = [];
-    ticketAssignee.map((t) => {
-      ticketIds.push(t.ticketId);
-    });
-
-    if (overdue) {
-      const overdue = await TicketModel.find({
-        _id: { $in: ticketIds },
-        dueDate: { $lte: new Date(endDate!.toString()) },
-        status: { $ne: COMPLETED },
-        applicationId: { $exists: false },
-      }).populate<{ reporter: IUserDocument }>("reporter", "id name");
-      return res.status(200).send({ tasks: overdue });
-    }
-    console.log(startDate, endDate);
-    const tasks = await TicketModel.find({
-      _id: { $in: ticketIds },
-      dueDate: { $lte: new Date(endDate!.toString()) },
-      startDate: { $gte: new Date(startDate!.toString()) },
-      status: { $ne: COMPLETED },
-      applicationId: { $exists: false },
-    }).populate<{ reporter: IUserDocument }>("reporter", "id name");
-    return res.status(200).send(tasks);
-  } catch (e: any) {
-    console.log(e);
-    if (e.status) return res.status(e.status).send(e);
-    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
-  }
-});
-
-router.get("/completed", async (req: Request, res: Response) => {
-  try {
-    const ticketAssignee = await TicketAssigneeModel.find({
-      employeeId: req.employee._id,
-    });
-    let ticketIds: Schema.Types.ObjectId[] = [];
-    ticketAssignee.map((t) => {
-      ticketIds.push(t.ticketId);
-    });
-    const tasks = await TicketModel.find({
-      _id: { $in: ticketIds },
-      status: COMPLETED,
-    }).populate<{ reporter: IUserDocument }>("reporter", "id name");
-    return res.status(200).send(tasks);
-  } catch (e: any) {
-    if (e.status) return res.status(e.status).send(e);
-    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
-  }
-});
-
-router.get("/all", async (req: Request, res: Response) => {
-  try {
-    console.log(req.employee);
-    const ticketAssignee = await TicketAssigneeModel.find({
-      employeeId: req.employee._id,
-    });
-
-    let tickets: Schema.Types.ObjectId[] = [];
-    ticketAssignee.map((ticket) => tickets.push(ticket.ticketId));
-
-    const finalTickets = await TicketModel.find({
-      _id: { $in: tickets },
-    }).populate<{ reporter: IUserDocument }>("reporter", "id name");
-    console.log(finalTickets);
-    return res.status(200).send(finalTickets);
-  } catch (e: any) {
-    if (e.status) return res.status(e.status).send(e);
-    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
-  }
-});
-
-router.get("/:_id", async (req: Request, res: Response) => {
-  try {
-    const { _id } = req.params;
-    const ticketAssignee = await TicketAssigneeModel.findOne({
-      ticketId: _id,
-      employeeId: req.employee._id,
-    });
-    const ticket = await TicketModel.findById(_id);
-    const designation = await DesignationModel.findById(
-      req.employee.designationId
-    );
-    if (
-      designation?.name === ADMIN ||
-      ticketAssignee ||
-      ticket!.reporter!.toString() == req.employee._id
-    ) {
-      return res.status(200).send(ticket);
-    }
-  } catch (e: any) {
     if (e.status) return res.status(e.status).send(e);
     else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
   }
