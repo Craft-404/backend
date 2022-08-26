@@ -14,6 +14,7 @@ import {
 import { TicketAssigneeModel } from "../models/ticketAsssignee";
 import { ITicketDocument, TicketModel } from "../models/ticket";
 import { DesignationModel } from "../models/designation";
+import { IUserDocument } from "../models/user";
 const router = Router();
 
 router.use(authFunction);
@@ -103,7 +104,7 @@ router.get("/date", async (req: Request, res: Response) => {
         _id: { $in: ticketIds },
         dueDate: { $lte: new Date(endDate!.toString()) },
         status: { $ne: COMPLETED },
-      });
+      }).populate<{ reporter: IUserDocument }>("reporter", "id name");
       return res.status(200).send({ tasks: overdue });
     }
     console.log(startDate, endDate);
@@ -112,7 +113,7 @@ router.get("/date", async (req: Request, res: Response) => {
       dueDate: { $lte: new Date(endDate!.toString()) },
       startDate: { $gte: new Date(startDate!.toString()) },
       status: { $ne: COMPLETED },
-    });
+    }).populate<{ reporter: IUserDocument }>("reporter", "id name");
     return res.status(200).send(tasks);
   } catch (e: any) {
     console.log(e);
@@ -133,7 +134,7 @@ router.get("/completed", async (req: Request, res: Response) => {
     const tasks = await TicketModel.find({
       _id: { $in: ticketIds },
       status: COMPLETED,
-    });
+    }).populate<{ reporter: IUserDocument }>("reporter", "id name");
     return res.status(200).send(tasks);
   } catch (e: any) {
     if (e.status) return res.status(e.status).send(e);
@@ -151,7 +152,9 @@ router.get("/all", async (req: Request, res: Response) => {
     let tickets: Schema.Types.ObjectId[] = [];
     ticketAssignee.map((ticket) => tickets.push(ticket.ticketId));
 
-    const finalTickets = await TicketModel.find({ _id: { $in: tickets } });
+    const finalTickets = await TicketModel.find({
+      _id: { $in: tickets },
+    }).populate<{ reporter: IUserDocument }>("reporter", "id name");
     console.log(finalTickets);
     return res.status(200).send(finalTickets);
   } catch (e: any) {
