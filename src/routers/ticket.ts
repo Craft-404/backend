@@ -16,8 +16,8 @@ import { TicketAssigneeModel } from "../models/ticketAsssignee";
 import { ITicketDocument, TicketModel } from "../models/ticket";
 import { DesignationModel } from "../models/designation";
 import { IUserDocument } from "../models/user";
-import { ApplicationModel } from "../models/application";
-import { EmployeeModel } from "../models/employee";
+import { ApplicationModel, IApplicationDocument } from "../models/application";
+import { EmployeeModel, IEmployeeDocument } from "../models/employee";
 
 const router = Router();
 
@@ -51,6 +51,14 @@ router.post("/", async (req: Request, res: Response) => {
     else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
   } finally {
     await session.endSession();
+  }
+});
+
+router.get("/user/approval", async (req: Request, res: Response) => {
+  try {
+  } catch (e: any) {
+    if (e.status) return res.status(e.status).send(e.message);
+    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
   }
 });
 
@@ -108,7 +116,12 @@ router.get("/approval", async (req: Request, res: Response) => {
       applicationId: { $exists: true },
       status: { $nin: [COMPLETED, CANCELLED] },
       category: "Approval",
-    }).populate<{ userId: IUserDocument }>("userId", "id name");
+    })
+      .populate<{ reporter: IEmployeeDocument }>("reporter", "id name")
+      .populate<{ applicationId: IApplicationDocument }>(
+        "applicationId",
+        "scheme userId"
+      );
     return res.status(200).send(approvals);
   } catch (e: any) {
     console.log(e);

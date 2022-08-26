@@ -6,6 +6,7 @@ import {
   TICKET_TYPE_ENUM,
   TYPES,
 } from "../../middlewares/constants";
+import { ApplicationModel, IApplicationDocument } from "../application";
 import { DocumentModel, IDocumentDocument } from "../document";
 import { EmployeeModel, IEmployeeDocument } from "../employee";
 // import { PRIORITY, priorityEnum } from "../../middlewares/constants";
@@ -14,7 +15,7 @@ export interface ITicketDocument extends Document {
   title: string;
   reporter: PopulatedDoc<IEmployeeDocument>;
   description: string | undefined;
-  applicationId: Schema.Types.ObjectId | undefined;
+  applicationId: PopulatedDoc<IApplicationDocument>;
   documentId: PopulatedDoc<IDocumentDocument>;
   remarks: string | undefined;
   dueDate: Date | undefined;
@@ -59,6 +60,7 @@ export const TicketSchema = new Schema<ITicketDocument>(
     },
     applicationId: {
       type: Schema.Types.ObjectId,
+      ref: ApplicationModel,
     },
     status: {
       type: String,
