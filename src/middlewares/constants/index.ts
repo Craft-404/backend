@@ -80,9 +80,9 @@ export const TASK = "Task";
 export const TYPES = [APPROVAL, TASK];
 export type TICKET_TYPE_ENUM = typeof APPROVAL | typeof TASK;
 
-export const STUDENT = "Student";
-export const INSTITUTION = "Institution";
-export const FACULTY = "Institution";
+export const STUDENT = "STUDENT";
+export const INSTITUTION = "INSTITUTION";
+export const FACULTY = "FACULTY";
 
 export const USER_TYPES = [STUDENT, INSTITUTION, FACULTY];
 export type USER_TYPE = typeof STUDENT | typeof INSTITUTION | typeof FACULTY;

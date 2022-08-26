@@ -7,6 +7,7 @@ export interface IApplicationDocument extends Document {
   userId: PopulatedDoc<IUserDocument>;
   status: Number;
   documentLink: String | undefined;
+  // marks:
 }
 
 export const ApplicationSchema = new Schema<IApplicationDocument>(
