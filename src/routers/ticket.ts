@@ -129,7 +129,7 @@ router.get("/approval", async (req: Request, res: Response) => {
         "applicationId",
         "scheme userId"
       );
-    return res.status(200).send(approvals);
+    return res.status(200).send({ approvals });
   } catch (e: any) {
     console.log(e);
     if (e.status) return res.status(e.status).send(e);
