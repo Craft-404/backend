@@ -128,13 +128,13 @@ router.get("/approval", async (req: Request, res: Response) => {
       .populate<{ applicationId: IApplicationDocument }>(
         "applicationId",
         "scheme userId"
-      )
-      .populate({
-        path: "applicationId",
-        populate: {
-          path: "applicationId.userId",
-        },
-      });
+      );
+    // .populate({
+    //   path: "applicationId",
+    //   populate: {
+    //     path: "applicationId.userId",
+    //   },
+    // });
     return res.status(200).send({ approvals });
   } catch (e: any) {
     console.log(e);
