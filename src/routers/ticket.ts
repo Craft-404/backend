@@ -78,8 +78,10 @@ router.get("/task", async (req: Request, res: Response) => {
     console.log(startDate, endDate);
     const tasks = await TicketModel.find({
       _id: { $in: ticketIds },
-      dueDate: { $lte: new Date(endDate!.toString()) },
-      startDate: { $gte: new Date(startDate!.toString()) },
+      $and: [
+        { dueDate: { $lte: new Date(endDate!.toString()) } },
+        { dueDate: { $gte: new Date(startDate!.toString()) } },
+      ],
       status: { $ne: COMPLETED },
       applicationId: { $exists: false },
     }).populate<{ reporter: IUserDocument }>("reporter", "id name");
