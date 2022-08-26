@@ -6,6 +6,7 @@ import {
 } from "../middlewares/constants";
 import { DocumentModel } from "../models/document";
 const router = Router();
+import axios from "axios";
 
 router.use(authFunction);
 
@@ -17,6 +18,14 @@ router.post("/", async (req: Request, res: Response) => {
     });
 
     //axios request
+    axios.get(
+      "https://25e0-2409-4063-6d07-4dd0-61bc-4ec9-c106-7b2b.ngrok.io/tenMS",
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     await document.save();
     return res.status(201).send(document);
