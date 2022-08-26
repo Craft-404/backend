@@ -86,9 +86,10 @@ router.get("/tickets/:applicationId", async (req: Request, res: Response) => {
 
 router.get("/:id", async (req: Request, res: Response) => {
   try {
-    const application = await ApplicationModel.findById(req.params.ids)
+    const application = await ApplicationModel.findById(req.params.id)
       .populate<{ userId: IUserDocument }>("userId", "id name email")
       .populate<{ scheme: ISchemeDocument }>("scheme", "id name");
+
     console.log(application);
     return res.status(200).send(application);
   } catch (e: any) {
