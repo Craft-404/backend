@@ -106,7 +106,7 @@ router.get("/approval", async (req: Request, res: Response) => {
     const approvals = await TicketModel.find({
       _id: { $in: ticketAssigneeIds },
       applicationId: { $exists: true },
-      status: { $ne: [COMPLETED, CANCELLED] },
+      status: { $nin: [COMPLETED, CANCELLED] },
       category: "Approval",
     });
     return res.status(200).send(approvals);
