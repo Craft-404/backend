@@ -15,6 +15,8 @@ import { TicketAssigneeModel } from "../models/ticketAsssignee";
 import { ITicketDocument, TicketModel } from "../models/ticket";
 import { DesignationModel } from "../models/designation";
 import { IUserDocument } from "../models/user";
+import { ApplicationModel } from "../models/application";
+import { EmployeeModel } from "../models/employee";
 const router = Router();
 
 router.use(authFunction);
@@ -47,6 +49,63 @@ router.post("/", async (req: Request, res: Response) => {
     else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
   } finally {
     await session.endSession();
+  }
+});
+
+router.patch("/approval/:_id", async (req: Request, res: Response) => {
+  try {
+    const { _id } = req.params;
+    const ticketAssignee = await TicketAssigneeModel.findOne({
+      employeeId: req.employee._id,
+      ticketId: _id,
+    });
+    const ticket = await TicketModel.findById(_id);
+    if (
+      !ticket ||
+      !ticketAssignee ||
+      ticket!.reporter?.toString() === req.employee._id
+    ) {
+      return res.status(RESTRICTED_ERROR.status).send(RESTRICTED_ERROR);
+    }
+    let designationId: string = "";
+    const application = await ApplicationModel.findById(ticket!.applicationId!);
+    ticket.status = COMPLETED;
+    await ticket.save();
+    if (application?.status === 2) {
+      application.status = 3;
+
+      await application.save();
+      return res.status(200).send({ application, ticket });
+    }
+    if (application?.status === 0) {
+      application.status = 1;
+      designationId = "630749082d9754bace7d6d01";
+    } else if (application?.status === 1) {
+      application.status = 2;
+      designationId = "630749082d9754bace7d6d02";
+    }
+    const employee = await EmployeeModel.findOne({
+      designationId,
+      bureauId: req.employee.bureauId,
+    });
+
+    let newTicket = new TicketModel({
+      reporter: req.employee._id,
+      title: ticket.title,
+      description: `Computer generated: Step ${application?.status}`,
+      dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      category: "Approval",
+    });
+    let newTicketAssignee = new TicketAssigneeModel({
+      employeeId: employee!._id,
+      ticketId: newTicket._id,
+    });
+    await newTicketAssignee.save();
+    await newTicket.save();
+    return res.status(200).send({ application, ticket: newTicket });
+  } catch (e: any) {
+    if (e.status) return res.status(e.status).send(e);
+    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
   }
 });
 
