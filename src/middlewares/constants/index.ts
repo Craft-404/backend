@@ -48,9 +48,14 @@ const LOW = "Low";
 export const CREATED = "Created";
 export const IN_PROCESS = "In Process";
 export const COMPLETED = "Completed";
+export const CANCELLED = "Cancelled";
 
-export const STATUSES = [CREATED, IN_PROCESS, COMPLETED];
-export type STATUS_ENUM = typeof CREATED | typeof IN_PROCESS | typeof COMPLETED;
+export const STATUSES = [CREATED, IN_PROCESS, COMPLETED, CANCELLED];
+export type STATUS_ENUM =
+  | typeof CREATED
+  | typeof IN_PROCESS
+  | typeof COMPLETED
+  | typeof CANCELLED;
 
 export const LEVEL_ONE = "Level 1";
 export const LEVEL_TWO = "Level 2";
