@@ -111,6 +111,7 @@ router.get("/approval", async (req: Request, res: Response) => {
     });
     return res.status(200).send(approvals);
   } catch (e: any) {
+    console.log(e);
     if (e.status) return res.status(e.status).send(e);
     else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
   }
