@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, application } from "express";
 import mongoose, { Schema } from "mongoose";
 import authFunction from "../middlewares/auth";
 import {
@@ -49,6 +49,26 @@ router.post("/", async (req: Request, res: Response) => {
     else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
   } finally {
     await session.endSession();
+  }
+});
+
+router.get("/approval", async (req: Request, res: Response) => {
+  try {
+    const ticketAssignee = await TicketAssigneeModel.find({
+      employeeId: req.employee._id,
+    });
+    let ticketAssigneeIds: Schema.Types.ObjectId[] = [];
+    ticketAssignee.map((t) => ticketAssigneeIds.push(t.ticketId));
+    const approvals = await TicketModel.find({
+      _id: { $in: ticketAssigneeIds },
+      applicationId: { $exists: true },
+      status: { $ne: COMPLETED },
+      category: "Approval",
+    });
+    return res.status(200).send(approvals);
+  } catch (e: any) {
+    if (e.status) return res.status(e.status).send(e);
+    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
   }
 });
 
@@ -144,7 +164,7 @@ router.patch("/:_id", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/date", async (req: Request, res: Response) => {
+router.get("/task", async (req: Request, res: Response) => {
   try {
     const { endDate, overdue, startDate } = req.query;
     const END_DATE = new Date(endDate as string);
@@ -163,6 +183,7 @@ router.get("/date", async (req: Request, res: Response) => {
         _id: { $in: ticketIds },
         dueDate: { $lte: new Date(endDate!.toString()) },
         status: { $ne: COMPLETED },
+        applicationId: { $exists: false },
       }).populate<{ reporter: IUserDocument }>("reporter", "id name");
       return res.status(200).send({ tasks: overdue });
     }
@@ -172,6 +193,7 @@ router.get("/date", async (req: Request, res: Response) => {
       dueDate: { $lte: new Date(endDate!.toString()) },
       startDate: { $gte: new Date(startDate!.toString()) },
       status: { $ne: COMPLETED },
+      applicationId: { $exists: false },
     }).populate<{ reporter: IUserDocument }>("reporter", "id name");
     return res.status(200).send(tasks);
   } catch (e: any) {
