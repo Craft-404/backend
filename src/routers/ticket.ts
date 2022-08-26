@@ -18,6 +18,7 @@ import { DesignationModel } from "../models/designation";
 import { IUserDocument } from "../models/user";
 import { ApplicationModel, IApplicationDocument } from "../models/application";
 import { EmployeeModel, IEmployeeDocument } from "../models/employee";
+import { ISchemeDocument } from "../models/scheme";
 
 const router = Router();
 
@@ -56,6 +57,12 @@ router.post("/", async (req: Request, res: Response) => {
 
 router.get("/user/approval", async (req: Request, res: Response) => {
   try {
+    const application = await ApplicationModel.find({
+      userId: req.user._id,
+    })
+      .populate<{ userId: IUserDocument }>("userId", "id name")
+      .populate<{ scheme: ISchemeDocument }>("scheme", "id name");
+    return res.status(200).send(application);
   } catch (e: any) {
     if (e.status) return res.status(e.status).send(e.message);
     else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
