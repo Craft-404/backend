@@ -261,7 +261,7 @@ router.patch("/approval/:_id", async (req: Request, res: Response) => {
       designationId,
       bureauId: req.employee.bureauId,
     });
-
+    console.log(employee);
     let newTicket = new TicketModel({
       reporter: req.employee._id,
       title: ticket.title,
@@ -269,6 +269,8 @@ router.patch("/approval/:_id", async (req: Request, res: Response) => {
       dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
       category: "Approval",
     });
+    console.log(newTicket);
+
     let newTicketAssignee = new TicketAssigneeModel({
       employeeId: employee!._id,
       ticketId: newTicket._id,

@@ -1,5 +1,4 @@
 import { Schema, model } from "mongoose";
-
 export interface IDocumentDocument extends Document {
   title: string;
   uploadedBy: Schema.Types.ObjectId;
