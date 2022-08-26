@@ -118,6 +118,7 @@ router.get("/approval", async (req: Request, res: Response) => {
     });
     let ticketAssigneeIds: Schema.Types.ObjectId[] = [];
     ticketAssignee.map((t) => ticketAssigneeIds.push(t.ticketId));
+    console.log(ticketAssigneeIds);
     const approvals = await TicketModel.find({
       _id: { $in: ticketAssigneeIds },
       applicationId: { $exists: true },
@@ -135,6 +136,7 @@ router.get("/approval", async (req: Request, res: Response) => {
     //     path: "applicationId.userId",
     //   },
     // });
+    console.log(approvals);
     return res.status(200).send({ approvals });
   } catch (e: any) {
     console.log(e);
