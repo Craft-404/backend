@@ -15,6 +15,9 @@ router.post("/", async (req: Request, res: Response) => {
       ...req.body,
       uploadedBy: req.user._id,
     });
+
+    //axios request
+
     await document.save();
     return res.status(201).send(document);
   } catch (e: any) {
@@ -40,10 +43,10 @@ router.patch("/:_id", async (req: Request, res: Response) => {
 router.get("/:appId", async (req: Request, res: Response) => {
   try {
     const { appId } = req.params;
-    const document = await DocumentModel.findOne({
+    const document = await DocumentModel.find({
       applicationId: appId,
     });
-    return res.status(200).send({ document });
+    return res.status(200).send(document);
   } catch (e: any) {
     if (e.status) return res.status(e.status).send(e);
     else return res.status(INTERNAL_SERVER_ERROR.status).send(e);

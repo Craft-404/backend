@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import authFunction from "../middlewares/auth";
 import {
+  APPROVAL,
   INTERNAL_SERVER_ERROR,
   LILAVATI_AWARD,
   RESOURCE_CREATED,
@@ -57,6 +58,20 @@ router.post("/", async (req: Request, res: Response) => {
     await ticketAssignee.save();
 
     return res.status(RESOURCE_CREATED.status).send(application);
+  } catch (e: any) {
+    if (e.status) return res.status(e.status).send(e);
+    else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
+  }
+});
+
+router.get("/tickets/:applicationId", async (req: Request, res: Response) => {
+  try {
+    const { applicationId } = req.params;
+    const tickets = await TicketModel.find({
+      applicationId,
+      category: APPROVAL,
+    });
+    return res.status(200).send(tickets);
   } catch (e: any) {
     if (e.status) return res.status(e.status).send(e);
     else return res.status(INTERNAL_SERVER_ERROR.status).send(e);
