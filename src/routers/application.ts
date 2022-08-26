@@ -8,13 +8,13 @@ import {
   SWANATH_SCHOLARSHIP_SCHEME,
   YOUTH_UNDERTAKING_VISIT_FOR_ACQUIRING_KNOWLEDGE,
 } from "../middlewares/constants";
-import { ApplicationModel } from "../models/application";
+import { ApplicationModel, IApplicationDocument } from "../models/application";
 const router = Router();
 import moment from "moment";
 import { ISchemeDocument, SchemeModel } from "../models/scheme";
 import { IUserDocument } from "../models/user";
 import { BureauModel } from "../models/bureau";
-import { EmployeeModel } from "../models/employee";
+import { EmployeeModel, IEmployeeDocument } from "../models/employee";
 import { TicketModel } from "../models/ticket";
 import { TicketAssigneeModel } from "../models/ticketAsssignee";
 
@@ -70,7 +70,13 @@ router.get("/tickets/:applicationId", async (req: Request, res: Response) => {
     const tickets = await TicketModel.find({
       applicationId,
       category: APPROVAL,
-    });
+    })
+      .populate<{ reporter: IEmployeeDocument }>("reporter", "id name")
+      .populate<{ applicationId: IApplicationDocument }>(
+        "applicationId",
+        "scheme"
+      );
+
     return res.status(200).send(tickets);
   } catch (e: any) {
     if (e.status) return res.status(e.status).send(e);
