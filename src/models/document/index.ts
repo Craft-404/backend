@@ -5,6 +5,10 @@ export interface IDocumentDocument extends Document {
   uploadedBy: Schema.Types.ObjectId;
   description: string | undefined;
   documentLink: string;
+  organisationName: string;
+  organisationContact: string;
+  metadata: string | undefined;
+  isVerified: Boolean;
 }
 
 export const DocumentSchema = new Schema<IDocumentDocument>(
@@ -30,6 +34,19 @@ export const DocumentSchema = new Schema<IDocumentDocument>(
     documentLink: {
       type: String,
       required: true,
+    },
+    organisationName: {
+      type: String,
+      required: true,
+    },
+    organisationContact: {
+      type: String,
+      required: true,
+    },
+    metadata: String,
+    isVerified: {
+      type: Boolean,
+      default: false,
     },
   },
   {

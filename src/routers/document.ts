@@ -10,7 +10,7 @@ router.post("/", async (req: Request, res: Response) => {
   try {
     const document = new DocumentModel({
       ...req.body,
-      uploadedBy: req.employee._id,
+      uploadedBy: req.user._id,
     });
     await document.save();
     return res.status(201).send(document);

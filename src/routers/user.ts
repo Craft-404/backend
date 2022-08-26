@@ -36,4 +36,20 @@ router.post("/login", async (req: Request, res: Response) => {
   }
 });
 
+router.use(authFunction);
+
+router.get("/logout", async (req: Request, res: Response) => {
+  try {
+    let user = req.user;
+    delete user.token;
+    return res.status(RESOURCE_UPDATED.status).send(RESOURCE_UPDATED);
+  } catch (e: any) {
+    if (e.status && e.message) return res.status(e.status).send(e);
+    else
+      return res
+        .status(INTERNAL_SERVER_ERROR.status)
+        .send(INTERNAL_SERVER_ERROR);
+  }
+});
+
 export default router;
