@@ -10,6 +10,7 @@ import {
   RESOURCE_CREATED,
   RESOURCE_UPDATED,
   RESTRICTED_ERROR,
+  CANCELLED,
 } from "../middlewares/constants";
 import { TicketAssigneeModel } from "../models/ticketAsssignee";
 import { ITicketDocument, TicketModel } from "../models/ticket";
@@ -17,7 +18,7 @@ import { DesignationModel } from "../models/designation";
 import { IUserDocument } from "../models/user";
 import { ApplicationModel } from "../models/application";
 import { EmployeeModel } from "../models/employee";
-import { CANCELLED } from "dns";
+
 const router = Router();
 
 router.use(authFunction);
