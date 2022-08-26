@@ -9,6 +9,7 @@ export interface IDocumentDocument extends Document {
   organisationContact: string;
   metadata: string | undefined;
   isVerified: Boolean;
+  applicationId: Schema.Types.ObjectId;
 }
 
 export const DocumentSchema = new Schema<IDocumentDocument>(
@@ -47,6 +48,10 @@ export const DocumentSchema = new Schema<IDocumentDocument>(
     isVerified: {
       type: Boolean,
       default: false,
+    },
+    applicationId: {
+      type: Schema.Types.ObjectId,
+      required: true,
     },
   },
   {
